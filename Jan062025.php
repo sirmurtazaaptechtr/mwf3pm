@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1); // strict requirement
+
 // Global variable: This variable is accessible throughout the script, 
 // but not inside functions unless explicitly made global.
 $name = "Abdul Basit";
@@ -31,6 +33,11 @@ function theNumber() {
     echo "<p>$number</p>"; // Prints the incremented value
 }
 
+function addNumbers (float $num1, float $num2) {
+    $sum = $num1 + $num2;
+    echo "<p>$num1 + $num2 = $sum</p>";
+}
+
 updateName("Ali Raza");
 
 // Attempting to access global and local variables
@@ -48,4 +55,41 @@ myNumber(); // Output: 1
 // Calling theNumber() twice: `$number` retains its value between calls due to the `static` keyword.
 theNumber(); // Output: 1
 theNumber(); // Output: 2
+
+
+addNumbers(12,6);
+//addNumbers(12,"Six");
+
+// PHP Arrays
+// Indexed array
+
+$students = ["Abdul Basit","Madiha","Jannat","Rose","Ujala"];
+$students = array("Abdul Basit","Madiha","Jannat","Rose","Ujala");
+
+echo "<p>" . $students[3] . "</p>";
+
+// Associative Array
+
+$student = ["Name"=>"Abdul Basit","Age"=>18];
+
+echo "<p>Name : " . $student["Name"] . "</p>";
+echo "<p>Age : " . $student["Age"] . "</p>";
+
+// Associative Array (outer Array is indexed and inner Array is Associative)
+$students = [
+    ["Name"=>"Abdul Basit","Age"=>18],
+    ["Name"=>"Madiha Pervaiz","Age"=>18],
+    ["Name"=>"Jannat Korai","Age"=>22],
+    ["Name"=>"Rose Mary","Age"=>21],
+    ["Name"=>"Ujala Tariq","Age"=>20]
+];
+
+echo "<p>Name : " . $students[0]["Name"] . "</p>";
+echo "<p>Age : " . $students[0]["Age"] . "</p>";
+
+foreach($students as $student) {
+    echo "<p> Name : " . $student['Name'] . "</p>";
+    echo "<p> Age : " . $student['Age'] . "</p>";
+}
+
 ?>
