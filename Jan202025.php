@@ -1,15 +1,33 @@
 <?php
 include('functions.php');
 $name = $cnic = $email = $website = $comments = $gender = '';
+$nameErr = $cnicErr = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_btn'])) {
-    // pr($_POST);
-    $name = $_POST['full_name'];
-    $cnic = $_POST['cnic'];
-    $email = $_POST['email_address'];
-    $website = $_POST['website'];
-    $comments = $_POST['comments'];
-    $gender = $_POST['gender'];
+    pr($_POST);
+
+    if(empty($_POST['full_name'])) {
+        $nameErr = "Name is required!";
+    }else {
+        $name = safe_input($_POST['full_name']);
+        if(!preg_match("/^[a-zA-Z-' ]*$/",$name)) {
+            $nameErr = "Invalid Name!<br>Only letters or white-spaces are allowed.";
+        }
+    }
+
+    if(empty($_POST['cnic'])) {
+        $cnicErr = "CNIC is required!";
+    }else {
+        $cnic = safe_input($_POST['cnic']);
+        if(!preg_match("/^\d{5}-\d{7}-\d{1}$/",$cnic)) {
+            $cnicErr = "Invalid CNIC"; 
+        }
+    }
+
+    $email = safe_input($_POST['email_address']);
+    $website = safe_input($_POST['website']);
+    $comments = safe_input($_POST['comments']);
+    $gender = safe_input($_POST['gender']);
 }
 
 
@@ -37,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_btn'])) {
                     <input type="text" class="form-control" id="name" name="full_name" placeholder="Jane Dow" value="<?php echo $name;?>">
                 </div>
                 <div class="col-6">
-                    <span class="text-danger">*</span>
+                    <span class="text-danger">*<?php echo $nameErr;?></span>
                 </div>
             </div>
             <div class="row mb-3">
@@ -46,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_btn'])) {
                     <input type="text" class="form-control" id="cnic" name="cnic" placeholder="XXXXX-XXXXXXX-X" value="<?php echo $cnic;?>">
                 </div>
                 <div class="col-6">
-                    <span class="text-danger">*</span>
+                    <span class="text-danger">*<?php echo $cnicErr;?></span>
                 </div>
             </div>
             <div class="row mb-3">
