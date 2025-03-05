@@ -8,27 +8,31 @@ $result = mysqli_query($conn, $emp_sql);
 ?>
 <main id="main" class="main">
 
-    <div class="pagetitle">
-      <h1>Employees</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.php">Home</a></li>          
-          <li class="breadcrumb-item active">Employees</li>
-        </ol>
-      </nav>
-    </div><!-- End Page Title -->
-    <?php // prx($result); ?>
+  <div class="pagetitle">
+    <h1>Employees</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+        <li class="breadcrumb-item active">Employees</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+  <?php // prx($result); ?>
 
-    <section class="section">
-      <div class="row">
-        <div class="col-lg-12">
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-12">
 
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">All Employees</h5>
-              <p>
-              <a type="button" class="btn btn-primary"><i class="bi bi-plus me-1"></i> Add Employee</a>
-              </p>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">All Employees</h5>
+            <p>
+              <a href="add.employee.php" type="button" class="btn btn-primary"><i class="bi bi-plus me-1"></i> Add
+                Employee</a>
+            </p>
+
+            <div class="table-responsive">
+
 
               <!-- Table with stripped rows -->
               <table class="table datatable">
@@ -44,33 +48,73 @@ $result = mysqli_query($conn, $emp_sql);
                   </tr>
                 </thead>
                 <tbody>
-                <?php 
+                  <?php 
                 $srno = 1; 
                 while($row = mysqli_fetch_assoc($result)) {
-                ?>
-                <tr>
-                    <th scope="row"><?php echo $srno;?></th>
-                    <td><?php echo $row['EmpID'];?></td>
-                    <td><?php echo $row['Name'];?></td>
-                    <td><?php echo $row['Email'];?></td>
-                    <td><?php echo $row['Password'];?></td>
-                    <td><?php echo $row['Role'];?></td>
-                    <td><?php echo $row['AdminID'];?></td>
-                </tr>
-                <?php
+                  ?>
+                  <tr>
+                    <th scope="row">
+                      <?php echo $srno;?>
+                    </th>
+                    <td>
+                      <?php echo $row['EmpID'];?>
+                    </td>
+                    <td>
+                      <?php echo $row['Name'];?>
+                    </td>
+                    <td>
+                      <?php echo $row['Email'];?>
+                    </td>
+                    <!-- <td>
+                      <?php echo $row['Password'];?>
+                    </td> -->
+                    <td>
+                      <span class="password-hidden">******</span>
+                      <span class="password-real d-none"><?php echo $row['Password']; ?></span>
+                      <button type="button" class="btn btn-sm btn-outline-primary ms-2 toggle-password">Show</button>
+                    </td>
+                    <td>
+                      <?php echo $row['Role'];?>
+                    </td>
+                    <td>
+                      <?php echo $row['AdminID'];?>
+                    </td>
+                  </tr>
+                  <?php
                 $srno++;
-                }
-                ?>
+              }
+              ?>
                 </tbody>
               </table>
-              <!-- End Table with stripped rows -->
-
             </div>
-          </div>
+            <!-- End Table with stripped rows -->
 
+          </div>
         </div>
+
       </div>
-    </section>
+    </div>
+  </section>
 
 </main><!-- End #main -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      document.querySelectorAll('.toggle-password').forEach(button => {
+          button.addEventListener('click', function() {
+              let hiddenSpan = this.previousElementSibling.previousElementSibling;
+              let realSpan = this.previousElementSibling;
+
+              if (realSpan.classList.contains('d-none')) {
+                  realSpan.classList.remove('d-none');
+                  hiddenSpan.classList.add('d-none');
+                  this.textContent = "Hide";
+              } else {
+                  realSpan.classList.add('d-none');
+                  hiddenSpan.classList.remove('d-none');
+                  this.textContent = "Show";
+              }
+          });
+      });
+  });
+</script>
 <?php include('inc.footer.php'); ?>

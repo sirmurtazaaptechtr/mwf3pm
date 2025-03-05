@@ -1,174 +1,158 @@
-<?php include('inc.header.php');?>
+<?php 
+include('inc.header.php');
+
+$message = $empName = $email = $password = $role = $adminID = '';
+$empNameErr = $emailErr = $passwordErr = $roleErr = $adminIDErr = '';
+
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submitBtn'])) {
+  
+  // Name validation
+  if(empty($_POST['empName'])) {
+    $empNameErr = "Please enter employee name!";
+  } else {
+    $empName = test_input($_POST['empName']);
+  }
+
+  // Email validation
+  if(empty($_POST['email'])) {
+    $emailErr = "Please enter an email!";
+  } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+    $emailErr = "Invalid email format!";
+  } else {
+    $email = test_input($_POST['email']);
+  }
+
+  // Password validation
+  if(empty($_POST['password'])) {
+    $passwordErr = "Please enter a password!";
+  } elseif (strlen($_POST['password']) < 6) {
+    $passwordErr = "Password must be at least 6 characters!";
+  } else {
+    $password = password_hash(test_input($_POST['password']), PASSWORD_BCRYPT);
+  }
+
+  // Role validation
+  if(empty($_POST['role'])) {
+    $roleErr = "Please select a role!";
+  } else {
+    $role = test_input($_POST['role']);
+  }
+
+  // Admin ID validation (Optional)
+  $adminID = !empty($_POST['adminID']) ? test_input($_POST['adminID']) : NULL;
+
+  // Check if there are no errors before inserting
+  if(empty($empNameErr) && empty($emailErr) && empty($passwordErr) && empty($roleErr)) {
+
+    // Escape values before inserting
+    $empName = mysqli_real_escape_string($conn, $empName);
+    $email = mysqli_real_escape_string($conn, $email);
+    $password = mysqli_real_escape_string($conn, $password);
+    $role = mysqli_real_escape_string($conn, $role);
+    $adminID = isset($adminID) ? (int)$adminID : 'NULL';
+
+    $sql = "INSERT INTO employee (Name, Email, Password, Role, AdminID) 
+            VALUES ('$empName', '$email', '$password', '$role', $adminID)";
+
+    if(mysqli_query($conn, $sql)) {
+      $message = "Employee added successfully!";
+      // Clear input fields
+      $empName = $email = $password = $role = $adminID = '';
+    } else {
+      $message = "Error: " . mysqli_error($conn);
+    }
+  }
+}
+?>
+
 <main id="main" class="main">
 
-    <div class="pagetitle">
-      <h1>Form Elements</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item">Forms</li>
-          <li class="breadcrumb-item active">Elements</li>
-        </ol>
-      </nav>
-    </div><!-- End Page Title -->
+  <div class="pagetitle">
+    <h1>Add Employee</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+        <li class="breadcrumb-item"><a href="employees.php">Employees</a></li>
+        <li class="breadcrumb-item active">Add Employee</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
 
-    <section class="section">
-      <div class="row">
-        <div class="col-lg-12">
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-12">
 
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">General Form Elements</h5>
-
-              <!-- General Form Elements -->
-              <form>
-                <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Text</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
-                  <div class="col-sm-10">
-                    <input type="email" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
-                  <div class="col-sm-10">
-                    <input type="password" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputNumber" class="col-sm-2 col-form-label">Number</label>
-                  <div class="col-sm-10">
-                    <input type="number" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputNumber" class="col-sm-2 col-form-label">File Upload</label>
-                  <div class="col-sm-10">
-                    <input class="form-control" type="file" id="formFile">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputDate" class="col-sm-2 col-form-label">Date</label>
-                  <div class="col-sm-10">
-                    <input type="date" class="form-control">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputTime" class="col-sm-2 col-form-label">Time</label>
-                  <div class="col-sm-10">
-                    <input type="time" class="form-control">
-                  </div>
-                </div>
-
-                <div class="row mb-3">
-                  <label for="inputColor" class="col-sm-2 col-form-label">Color Picker</label>
-                  <div class="col-sm-10">
-                    <input type="color" class="form-control form-control-color" id="exampleColorInput" value="#4154f1" title="Choose your color">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputPassword" class="col-sm-2 col-form-label">Textarea</label>
-                  <div class="col-sm-10">
-                    <textarea class="form-control" style="height: 100px"></textarea>
-                  </div>
-                </div>
-                <fieldset class="row mb-3">
-                  <legend class="col-form-label col-sm-2 pt-0">Radios</legend>
-                  <div class="col-sm-10">
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
-                      <label class="form-check-label" for="gridRadios1">
-                        First radio
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
-                      <label class="form-check-label" for="gridRadios2">
-                        Second radio
-                      </label>
-                    </div>
-                    <div class="form-check disabled">
-                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios" value="option" disabled>
-                      <label class="form-check-label" for="gridRadios3">
-                        Third disabled radio
-                      </label>
-                    </div>
-                  </div>
-                </fieldset>
-                <div class="row mb-3">
-                  <legend class="col-form-label col-sm-2 pt-0">Checkboxes</legend>
-                  <div class="col-sm-10">
-
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="gridCheck1">
-                      <label class="form-check-label" for="gridCheck1">
-                        Example checkbox
-                      </label>
-                    </div>
-
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="gridCheck2" checked>
-                      <label class="form-check-label" for="gridCheck2">
-                        Example checkbox 2
-                      </label>
-                    </div>
-
-                  </div>
-                </div>
-
-                <div class="row mb-3">
-                  <label class="col-sm-2 col-form-label">Disabled</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control" value="Read only / Disabled" disabled>
-                  </div>
-                </div>
-
-                <div class="row mb-3">
-                  <label class="col-sm-2 col-form-label">Select</label>
-                  <div class="col-sm-10">
-                    <select class="form-select" aria-label="Default select example">
-                      <option selected>Open this select menu</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                      <option value="3">Three</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="row mb-3">
-                  <label class="col-sm-2 col-form-label">Multi Select</label>
-                  <div class="col-sm-10">
-                    <select class="form-select" multiple aria-label="multiple select example">
-                      <option selected>Open this select menu</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                      <option value="3">Three</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="row mb-3">
-                  <label class="col-sm-2 col-form-label">Submit Button</label>
-                  <div class="col-sm-10">
-                    <button type="submit" class="btn btn-primary">Submit Form</button>
-                  </div>
-                </div>
-
-              </form><!-- End General Form Elements -->
-
-            </div>
+        <?php if(!empty($message)) { ?>
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-1"></i>
+            <?php echo $message; ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
+        <?php } ?>
 
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Employee Registration</h5>
+
+            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" class="needs-validation" novalidate>
+
+              <div class="mb-3">
+                <label for="empName" class="form-label">Employee Name</label>
+                <input type="text" class="form-control" id="empName" name="empName" value="<?php echo htmlspecialchars($empName); ?>" required>
+                <div class="text-danger"><?php echo $empNameErr; ?></div>
+              </div>
+
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
+                <div class="text-danger"><?php echo $emailErr; ?></div>
+              </div>
+
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+                <div class="text-danger"><?php echo $passwordErr; ?></div>
+              </div>
+
+              <div class="mb-3">
+                <label for="role" class="form-label">Role</label>
+                <select class="form-select" id="role" name="role" required>
+                  <option value="">Select Role</option>
+                  <option value="Admin" <?php echo ($role == "Admin") ? 'selected' : ''; ?>>Admin</option>
+                  <option value="Employee" <?php echo ($role == "Employee") ? 'selected' : ''; ?>>Employee</option>
+                </select>
+                <div class="text-danger"><?php echo $roleErr; ?></div>
+              </div>
+
+              <div class="mb-3">
+                <label for="adminID" class="form-label">Admin</label>
+                <select class="form-select" id="adminID" name="adminID">
+                    <option selected disabled>Select Admin</option>
+                    <?php
+                        $admin_id = $_SESSION['AdminID'];
+                        // Fetch all admins from the database
+                        $adminQuery = "SELECT AdminID, Name FROM admin WHERE AdminID = '$admin_id'";
+                        $adminResult = mysqli_query($conn, $adminQuery);
+
+                        while ($adminRow = mysqli_fetch_assoc($adminResult)) {
+                            $selected = ($adminRow['AdminID'] == $adminID) ? "selected" : "";
+                            echo "<option value='{$adminRow['AdminID']}' $selected>{$adminRow['Name']} (ID: {$adminRow['AdminID']})</option>";
+                        }
+                    ?>
+                </select>
+            </div>
+
+
+              <button type="submit" class="btn btn-primary" name="submitBtn">Submit</button>
+            </form>
+
+          </div>
         </div>
 
-        
       </div>
-    </section>
+    </div>
+  </section>
 
-</main><!-- End #main -->
-<?php include('inc.footer.php');?>
+</main>
+
+<?php include('inc.footer.php'); ?>
