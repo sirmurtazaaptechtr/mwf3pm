@@ -1,5 +1,18 @@
 <?php 
 include('inc.header.php');
+$message = '';
+
+if($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['emp_id'])) {
+  $empID = test_input($_GET['emp_id']);
+
+  $sql = "DELETE FROM `employee` WHERE EmpID = $empID";
+  $isDeleted = mysqli_query($conn,$sql);
+
+  if($isDeleted) {
+    $message = "Employee with id = $empID has been deleted successfully";
+  }
+
+}
 
 $emp_sql = "SELECT * FROM `employee`";
 $result = mysqli_query($conn, $emp_sql);
@@ -32,7 +45,12 @@ $result = mysqli_query($conn, $emp_sql);
             </p>
 
             <div class="table-responsive">
-
+              <?php if(!empty($message)) { ?>
+              <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?php echo $message;?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              <?php } ?>
 
               <!-- Table with stripped rows -->
               <table class="table datatable">
@@ -45,6 +63,7 @@ $result = mysqli_query($conn, $emp_sql);
                     <th scope="col">Password</th>
                     <th scope="col">Role</th>
                     <th scope="col">AdminID</th>
+                    <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -78,6 +97,12 @@ $result = mysqli_query($conn, $emp_sql);
                     </td>
                     <td>
                       <?php echo $row['AdminID'];?>
+                    </td>
+                    <td>
+                      <div class="btn-group" role="group" aria-label="Basic example">
+                        <a href="edit.employee.php?emp_id=<?php echo $row['EmpID'];?>" type="button" class="btn btn-warning">Edit</a>                        
+                        <a href="employees.php?emp_id=<?php echo $row['EmpID'];?>" type="button" class="btn btn-danger">Delete</a>
+                      </div>
                     </td>
                   </tr>
                   <?php
