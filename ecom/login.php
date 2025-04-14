@@ -2,7 +2,8 @@
   require('inc.connection.php');
   
   $username = $password = '';
-  if(isset($_POST['login_btn']) && $_SERVER["REQUEST_METHOD"] == 'POST') {
+  
+  if($_SERVER["REQUEST_METHOD"] == 'POST' && isset($_POST['login_btn'])) {
     $username = test_input($_POST['username']);
     $password = test_input($_POST['password']);
 
@@ -25,13 +26,9 @@
         echo "Invalid username or password!";
       }
 
+    }else {
+      echo "Invalid username or password!";
     }
-
-    
-    
-
-
-
     
   }
 ?>

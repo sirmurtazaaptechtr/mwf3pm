@@ -17,6 +17,5 @@ function test_input($input) {
     $input = htmlspecialchars($input);
     $input = stripcslashes($input);
     $input = trim($input);
-
     return $input;
 }
